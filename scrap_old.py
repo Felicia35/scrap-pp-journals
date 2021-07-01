@@ -29,18 +29,6 @@ ssl._create_default_https_context = ssl._create_unverified_context
 #              'International Public Management Journal',
 #              'Policy and Society']
 
-
-
-# journals = ['Policy Sciences']
-journals = ['International Journal of Public Administration']
-# journals = ['Social Policy & Administration']
-# journals = ['Local Government Studies']
-# journals = ['Review of Public Personnel Administration']
-# journals = ['Policy & Politic']
-# journals = ['International Public Management Journal']
-# journals = ['Policy and Society']
-
-
 def init_driver():
     chromedriver_path = chromedriver_autoinstaller.install()
     chrome_driver = webdriver.Chrome(executable_path=chromedriver_path)
