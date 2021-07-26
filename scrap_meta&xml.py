@@ -112,3 +112,17 @@ if __name__ == '__main__':
     all_data = scrap_data() # a list of dict
 
 
+##########################merge###############################
+# import pandas as pd
+# import glob
+
+
+# csv_files = glob.glob(os.path.join('./tables', "*.csv"))
+# li = []
+# for file in csv_files:
+#     tmp = pd.read_csv(file, index_col=None, header=None)
+#     li.append(tmp)
+
+# result = pd.concat(li, axis=0, ignore_index=True)
+# result = result.drop_duplicates()
+# result.to_csv(r'./result.csv', encoding='utf_8_sig')
