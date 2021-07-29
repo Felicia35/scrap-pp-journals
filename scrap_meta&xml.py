@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
 
 
-##########################merge###############################
+########################## merge ###############################
 # import pandas as pd
 # import glob
 # import os
@@ -129,4 +129,21 @@ if __name__ == '__main__':
 
 # result = pd.concat(li, axis=0, ignore_index=True)
 # result = result.drop_duplicates()
+# result = result.reset_index(drop=True)
 # result.to_csv(r'./result.csv', encoding='utf_8_sig')
+
+########################## download xml ###############################
+# import pandas as pd
+# import requests
+
+# input = pd.read_csv('result.csv')
+
+# url_list = input['url']
+# url_list = list(url_list)
+
+# for idx in range(127,len(url_list)):
+#     print(idx+1)
+#     print(url_list[idx])
+#     response = requests.get(url_list[idx])
+#     with open(f'./xmls/{idx+1}.xml', 'wb') as file:
+#         file.write(response.content)
