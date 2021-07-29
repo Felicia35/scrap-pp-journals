@@ -24,13 +24,14 @@ while year > 1994:
     year -= 2
 
 def scrap_data():
-
     for url in range(0, len(url_list)):
         driver.get(url_list[url])
 
         file_count = driver.find_element_by_xpath('//*[@id="item-count"]').text # how many files in total in these 2 years
         page_count = int(int(file_count)/20 + 1) # how many pages in these 2 years
+
         for page in range(1, page_count + 1):
+            driver.get(f'{url_list[url]}&page={page}')
             dict_list = []  # final output with every param in one column
             for i in range(1, 21):
                 dict = {}
@@ -49,32 +50,36 @@ def scrap_data():
                 url_parts = strUrl.split('/')
                 strXml = "https://www.federalregister.gov/documents/full_text/xml/" + url_parts[4] + '/' + url_parts[5] + '/' + url_parts[6] + '/' + url_parts[7] + '.xml'
 
-                ## find name and try to find Agency1 and Dated in text
-                name = driver.find_element_by_xpath('//*[@id="metadata_content_area"]/h1').text
+                ## try to find name, Agency1 and Dated in text
                 try:
-                    Agency1 = driver.find_element_by_xpath('//*[@id="p-1"]').text
+                    name = driver.find_element_by_xpath('//*[@id="metadata_content_area"]/h1').text
+                    Agency1 = driver.find_element_by_id('p-1').text
+                    # Agency1 = driver.find_element_by_css_selector('#p-1').text
                     Dated = driver.find_element_by_css_selector('p.signature-date').text
                 except NoSuchElementException:
                     print("Dated not found in text")
 
-                # store detailed (columned:store in dict) data into a list of dict -- dict_list
-                meta_dl = driver.find_element_by_xpath('//*[@id="main"]/div[4]/div/div/div[2]/div[1]/div[1]/div/div[2]/dl').text
-                meta_list = meta_dl.split("\n")
-                for term in range(len(meta_list)):
-                    if meta_list[term - 2] == 'Agencies:' and (meta_list[term] not in keywords):
-                        dict['Agency:'] = (meta_list[term-1], meta_list[term])
-                    if meta_list[term-1] in keywords:
-                        dict[meta_list[term-1]] = meta_list[term]
-                    else:
-                        continue
-                dict['name'] = name
-                dict['Agency1'] = Agency1
-                dict['url'] = strXml
-                dict['Dated'] = Dated
-                dict_list.append(dict)
+                try:
+                    # store detailed (columned:store in dict) data into a list of dict -- dict_list
+                    meta_dl = driver.find_element_by_xpath('//*[@id="main"]/div[4]/div/div/div[2]/div[1]/div[1]/div/div[2]/dl').text
+                    meta_list = meta_dl.split("\n")
+                    for term in range(len(meta_list)):
+                        if meta_list[term - 2] == 'Agencies:' and (meta_list[term] not in keywords):
+                            dict['Agency:'] = (meta_list[term-1], meta_list[term])
+                        if meta_list[term-1] in keywords:
+                            dict[meta_list[term-1]] = meta_list[term]
+                        else:
+                            continue
+                    dict['name'] = name
+                    dict['Agency1'] = Agency1
+                    dict['url'] = strXml
+                    dict['Dated'] = Dated
+                    dict_list.append(dict)
 
-                # return to previous page with 20 papers
-                driver.get(f'{url_list[url]}&page={page}')
+                    # return to previous page with 20 papers
+                    driver.get(f'{url_list[url]}&page={page}')
+                except:
+                    continue
 
             all_data = dict_list
             result = pd.DataFrame()
@@ -96,7 +101,7 @@ def scrap_data():
                           'url': all_data[dict_idx].get('url')
                           }
                 result = result.append(output, ignore_index=True)
-            result.to_csv(f'./tables{url}/output{page}.csv', index=None, encoding='utf_8_sig')
+            result.to_csv(f'./tables/year{url}page{page}.csv', index=None, encoding='utf_8_sig')
 
     return dict_list
 
